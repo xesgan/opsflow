@@ -4,8 +4,7 @@ Backend application for managing internal work orders.
 
 ## Current Status
 
-Project definition and initial domain modelling completed.
-Implementation has not started yet.
+Project setup initialized. Feature implementation has not started yet.
 
 ## First Vertical Slice
 
