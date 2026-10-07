@@ -2,6 +2,7 @@ package org.example.controller;
 
 import org.example.models.WorkOrder;
 import org.example.services.WorkOrderService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,7 +25,11 @@ public class WorkOrderController {
     }
 
     @GetMapping("/api/work-orders/{id}")
-    public WorkOrder getWorkOrder(@PathVariable UUID id){
-        return workOrderService.findWorkOrder(id);
+    public ResponseEntity<WorkOrder> getWorkOrder(@PathVariable UUID id){
+        WorkOrder order = workOrderService.findWorkOrder(id);
+        if(order == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(order);
     }
 }
