@@ -4,6 +4,7 @@ import org.example.models.WorkOrder;
 import org.example.repositories.WorkOrderRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,8 +25,8 @@ public class WorkOrderService {
         return workOrder;
     }
 
-    public WorkOrder findWorkOrder(UUID id){
+    public Optional<WorkOrder> findWorkOrder(UUID id){
 
-        return workOrderRepository.getWorkOrderById(id);
+        return workOrderRepository.findById(id);
     }
 }

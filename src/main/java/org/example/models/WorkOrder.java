@@ -1,18 +1,28 @@
 package org.example.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
 public class WorkOrder {
 
     private String title;
     private String description;
+    @Id
     private UUID id;
+    @Enumerated(EnumType.STRING)
     private WorkOrderStatus status;
     private LocalDateTime createdAt;
 //    There's a little limitation because it need to be thinked. Or probably
 //    not to many properties needed. Ex: userName, password...
 //    private User createdBy;
+
+    protected WorkOrder(){}
 
     public WorkOrder(String title, String description) {
         setTitle(title);
