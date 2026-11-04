@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: WorkOrderDB
+      POSTGRES_DB: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
