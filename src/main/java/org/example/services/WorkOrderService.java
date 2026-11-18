@@ -4,6 +4,7 @@ import org.example.models.WorkOrder;
 import org.example.repositories.WorkOrderRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,16 +18,16 @@ public class WorkOrderService {
     }
 
     public WorkOrder crearWorkOrder(String title, String description) {
-
         WorkOrder workOrder = new WorkOrder(title, description);
-
         workOrderRepository.save(workOrder);
-
         return workOrder;
     }
 
     public Optional<WorkOrder> findWorkOrder(UUID id){
-
         return workOrderRepository.findById(id);
+    }
+
+    public List<WorkOrder> findAllWorkOrders() {
+        return workOrderRepository.findAll();
     }
 }
