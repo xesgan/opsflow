@@ -5,6 +5,7 @@ import org.example.services.WorkOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,5 +35,10 @@ public class WorkOrderController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(order.get());
+    }
+
+    @GetMapping("/api/work-orders")
+    public List<WorkOrder> getAllWorkOrders(){
+        return workOrderService.findAllWorkOrders();
     }
 }
