@@ -25,10 +25,12 @@ public class WorkOrderController {
         return workOrderService.crearWorkOrder(request.title(), request.description());
     }
 
+    // Optional<WorkOrder> order = workOrderService.findWorkOrder(id)
+    // Le pide al servicio que busque la orden. El Optional puede contener la orden o estar vacío.
     @GetMapping("/api/work-orders/{id}")
-    public ResponseEntity<WorkOrder> getWorkOrder(@PathVariable UUID id){
+    public ResponseEntity<WorkOrder> getWorkOrder(@PathVariable UUID id) {
         Optional<WorkOrder> order = workOrderService.findWorkOrder(id);
-        if(order.isEmpty()){
+        if (order.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(order.get());

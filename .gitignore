@@ -36,5 +36,9 @@ build/
 .env
 *.log
 
+### PostgreSQL backups ###
+*.dump
+/OpsFlowDB/
+
 ### Mac OS ###
 .DS_Store
