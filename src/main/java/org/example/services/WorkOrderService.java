@@ -46,6 +46,17 @@ public class WorkOrderService {
         return Optional.of(savedOrder);
     }
 
+    public Optional<WorkOrder> resolveOrder(UUID id){
+        Optional<WorkOrder> order = findWorkOrder(id);
+        if(order.isEmpty()){
+            return Optional.empty();
+        }
+        WorkOrder workOrder = order.get();
+        workOrder.resolve();
+        WorkOrder savedOrder = workOrderRepository.save(workOrder);
+        return Optional.of(savedOrder);
+    }
+
     public Optional<WorkOrder> findWorkOrder(UUID id) {
         return workOrderRepository.findById(id);
     }

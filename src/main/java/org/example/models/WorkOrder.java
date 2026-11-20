@@ -97,6 +97,13 @@ public class WorkOrder {
         this.status = WorkOrderStatus.IN_PROGRESS;
     }
 
+    public void resolve() {
+        if(status != WorkOrderStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Solo se pueden resolver las órdenes que estén empezadas");
+        }
+        this.status = WorkOrderStatus.RESOLVED;
+    }
+
     @Override
     public String toString() {
         return "WorkOrder{" +

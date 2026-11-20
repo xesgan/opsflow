@@ -77,4 +77,20 @@ public class WorkOrderController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PatchMapping("/api/work-orders/{id}/resolve")
+    public ResponseEntity<WorkOrder> resolveOrder(@PathVariable UUID id) {
+        try{
+            Optional<WorkOrder> order = workOrderService.resolveOrder(id);
+            if(order.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(order.get());
+
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
