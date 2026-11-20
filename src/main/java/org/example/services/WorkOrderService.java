@@ -24,9 +24,9 @@ public class WorkOrderService {
         return workOrder;
     }
 
-    public Optional<WorkOrder> assignWorkOrder(UUID id, String assignedTo){
+    public Optional<WorkOrder> assignWorkOrder(UUID id, String assignedTo) {
         Optional<WorkOrder> order = findWorkOrder(id);
-        if(order.isEmpty()){
+        if (order.isEmpty()) {
             return Optional.empty();
         }
         WorkOrder workOrder = order.get();
@@ -35,7 +35,18 @@ public class WorkOrderService {
         return Optional.of(savedOrder);
     }
 
-    public Optional<WorkOrder> findWorkOrder(UUID id){
+    public Optional<WorkOrder> startOrder(UUID id) {
+        Optional<WorkOrder> order = findWorkOrder(id);
+        if (order.isEmpty()) {
+            return Optional.empty();
+        }
+        WorkOrder workOrder = order.get();
+        workOrder.inProgress();
+        WorkOrder savedOrder = workOrderRepository.save(workOrder);
+        return Optional.of(savedOrder);
+    }
+
+    public Optional<WorkOrder> findWorkOrder(UUID id) {
         return workOrderRepository.findById(id);
     }
 
