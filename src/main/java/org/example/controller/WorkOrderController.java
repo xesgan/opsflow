@@ -2,7 +2,6 @@ package org.example.controller;
 
 import org.example.models.WorkOrder;
 import org.example.services.WorkOrderService;
-import org.hibernate.jdbc.Work;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,11 +55,25 @@ public class WorkOrderController {
             }
             return ResponseEntity.ok(order.get());
 
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PatchMapping("/api/work-orders/{id}/inprogress")
+    public ResponseEntity<WorkOrder> startOrder(@PathVariable UUID id) {
+        try {
+            Optional<WorkOrder> order = workOrderService.startOrder(id);
+            if (order.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(order.get());
 
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().build();
         }
     }

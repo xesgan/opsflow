@@ -87,6 +87,16 @@ public class WorkOrder {
         }
     }
 
+    public void inProgress() {
+        if (status != WorkOrderStatus.ASSIGNED) {
+            throw new IllegalStateException("Solo se pueden poner en marcha las órdenes que estén asignadas");
+        }
+        if (assignedTo.isBlank() || assignedTo.isEmpty()) {
+            throw new IllegalArgumentException("El responsable es obligatorio");
+        }
+        this.status = WorkOrderStatus.IN_PROGRESS;
+    }
+
     @Override
     public String toString() {
         return "WorkOrder{" +
