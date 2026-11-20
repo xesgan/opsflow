@@ -2,6 +2,8 @@ package org.example.controller;
 
 import org.example.models.WorkOrder;
 import org.example.services.WorkOrderService;
+import org.hibernate.jdbc.Work;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,9 @@ public class WorkOrderController {
     record CreateWorkOrderRequest(String title, String description) {
     }
 
+    record AssignOrderRequest(String assignedTo) {
+    }
+
     @PostMapping("/api/work-orders")
     public WorkOrder postWorkOrder(@RequestBody CreateWorkOrderRequest request) {
         return workOrderService.crearWorkOrder(request.title(), request.description());
@@ -38,7 +43,25 @@ public class WorkOrderController {
     }
 
     @GetMapping("/api/work-orders")
-    public List<WorkOrder> getAllWorkOrders(){
+    public List<WorkOrder> getAllWorkOrders() {
         return workOrderService.findAllWorkOrders();
+    }
+
+    @PatchMapping("/api/work-orders/{id}/assignment")
+    public ResponseEntity<WorkOrder> assignOrder(@PathVariable UUID id, @RequestBody AssignOrderRequest request) {
+        try {
+            Optional<WorkOrder> order = workOrderService.assignWorkOrder(id, request.assignedTo);
+            if (order.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(order.get());
+
+
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

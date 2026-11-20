@@ -18,11 +18,13 @@ public class WorkOrder {
     @Enumerated(EnumType.STRING)
     private WorkOrderStatus status;
     private LocalDateTime createdAt;
+    private String assignedTo;
 //    There's a little limitation because it need to be thinked. Or probably
 //    not to many properties needed. Ex: userName, password...
 //    private User createdBy;
 
-    protected WorkOrder(){}
+    protected WorkOrder() {
+    }
 
     public WorkOrder(String title, String description) {
         setTitle(title);
@@ -39,7 +41,7 @@ public class WorkOrder {
     }
 
     public void setTitle(String title) {
-        if(title == null || title.isBlank()) {
+        if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title cannot be null or empty");
         }
         this.title = title;
@@ -50,7 +52,7 @@ public class WorkOrder {
     }
 
     public void setDescription(String description) {
-        if(description == null || description.isBlank()) {
+        if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("Description cannot be null or empty");
         }
         this.description = description;
@@ -68,6 +70,23 @@ public class WorkOrder {
         return createdAt;
     }
 
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void assign(String assignedTo) {
+        if (status != WorkOrderStatus.OPEN) {
+            throw new IllegalStateException("Solo se pueden asignar órdenes abiertas");
+        }
+        if (assignedTo == null || assignedTo.isBlank()) {
+            throw new IllegalArgumentException("El responsable es obligatorio");
+        }
+        if (getStatus() == WorkOrderStatus.OPEN) {
+            this.assignedTo = assignedTo;
+            this.status = WorkOrderStatus.ASSIGNED;
+        }
+    }
+
     @Override
     public String toString() {
         return "WorkOrder{" +
@@ -76,6 +95,7 @@ public class WorkOrder {
                 ", id=" + id +
                 ", status=" + status +
                 ", createdAt=" + createdAt +
+                ", assignedTo=" + assignedTo +
                 '}';
     }
 }
