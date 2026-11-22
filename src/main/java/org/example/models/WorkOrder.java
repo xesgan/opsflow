@@ -98,14 +98,14 @@ public class WorkOrder {
     }
 
     public void resolve() {
-        if(status != WorkOrderStatus.IN_PROGRESS) {
+        if (status != WorkOrderStatus.IN_PROGRESS) {
             throw new IllegalStateException("Solo se pueden resolver las órdenes que estén empezadas");
         }
         this.status = WorkOrderStatus.RESOLVED;
     }
 
     public void close() {
-        if(status != WorkOrderStatus.RESOLVED){
+        if (status != WorkOrderStatus.RESOLVED) {
             throw new IllegalStateException("Solo se pueden cerrar las órdenes resueltas");
         }
         this.status = WorkOrderStatus.CLOSED;
@@ -124,4 +124,10 @@ public class WorkOrder {
     }
 
 
+    public void cancel() {
+        if (status != WorkOrderStatus.OPEN && status != WorkOrderStatus.ASSIGNED && status != WorkOrderStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Solo se pueden cancelar ordenes abiertas, asignadas o en progreso");
+        }
+        this.status = WorkOrderStatus.CANCELLED;
+    }
 }
