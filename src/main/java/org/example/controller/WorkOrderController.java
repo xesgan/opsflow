@@ -80,9 +80,9 @@ public class WorkOrderController {
 
     @PatchMapping("/api/work-orders/{id}/resolve")
     public ResponseEntity<WorkOrder> resolveOrder(@PathVariable UUID id) {
-        try{
+        try {
             Optional<WorkOrder> order = workOrderService.resolveOrder(id);
-            if(order.isEmpty()) {
+            if (order.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(order.get());
@@ -95,16 +95,31 @@ public class WorkOrderController {
     }
 
     @PatchMapping("/api/work-orders/{id}/close")
-    public ResponseEntity<WorkOrder> closeOrder(@PathVariable UUID id){
-        try{
+    public ResponseEntity<WorkOrder> closeOrder(@PathVariable UUID id) {
+        try {
             Optional<WorkOrder> order = workOrderService.closeOrder(id);
-            if(order.isEmpty()){
+            if (order.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(order.get());
-        } catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PatchMapping("/api/work-orders/{id}/cancel")
+    public ResponseEntity<WorkOrder> cancelOrder(@PathVariable UUID id) {
+        try {
+            Optional<WorkOrder> order = workOrderService.cancelOrder(id);
+            if (order.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(order.get());
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().build();
         }
     }
