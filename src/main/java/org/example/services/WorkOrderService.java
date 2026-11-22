@@ -2,7 +2,6 @@ package org.example.services;
 
 import org.example.models.WorkOrder;
 import org.example.repositories.WorkOrderRepository;
-import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -83,6 +82,17 @@ public class WorkOrderService {
         }
         WorkOrder workOrder = order.get();
         workOrder.cancel();
+        WorkOrder savedOrder = workOrderRepository.save(workOrder);
+        return Optional.of(savedOrder);
+    }
+
+    public Optional<WorkOrder> reopenOrder(UUID id) {
+        Optional<WorkOrder> order = findWorkOrder(id);
+        if(order.isEmpty()){
+            return Optional.empty();
+        }
+        WorkOrder workOrder = order.get();
+        workOrder.reopen();
         WorkOrder savedOrder = workOrderRepository.save(workOrder);
         return Optional.of(savedOrder);
     }

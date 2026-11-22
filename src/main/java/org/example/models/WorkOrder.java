@@ -130,4 +130,11 @@ public class WorkOrder {
         }
         this.status = WorkOrderStatus.CANCELLED;
     }
+
+    public void reopen() {
+        if(status != WorkOrderStatus.RESOLVED){
+            throw new IllegalStateException("Solo se pueden reabrir las ordenes resueltas");
+        }
+        this.status = WorkOrderStatus.IN_PROGRESS;
+    }
 }
