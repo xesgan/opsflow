@@ -93,4 +93,19 @@ public class WorkOrderController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PatchMapping("/api/work-orders/{id}/close")
+    public ResponseEntity<WorkOrder> closeOrder(@PathVariable UUID id){
+        try{
+            Optional<WorkOrder> order = workOrderService.closeOrder(id);
+            if(order.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(order.get());
+        } catch (IllegalStateException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (IllegalArgumentException ex){
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

@@ -46,13 +46,24 @@ public class WorkOrderService {
         return Optional.of(savedOrder);
     }
 
-    public Optional<WorkOrder> resolveOrder(UUID id){
+    public Optional<WorkOrder> resolveOrder(UUID id) {
+        Optional<WorkOrder> order = findWorkOrder(id);
+        if (order.isEmpty()) {
+            return Optional.empty();
+        }
+        WorkOrder workOrder = order.get();
+        workOrder.resolve();
+        WorkOrder savedOrder = workOrderRepository.save(workOrder);
+        return Optional.of(savedOrder);
+    }
+
+    public Optional<WorkOrder> closeOrder(UUID id) {
         Optional<WorkOrder> order = findWorkOrder(id);
         if(order.isEmpty()){
             return Optional.empty();
         }
         WorkOrder workOrder = order.get();
-        workOrder.resolve();
+        workOrder.close();
         WorkOrder savedOrder = workOrderRepository.save(workOrder);
         return Optional.of(savedOrder);
     }

@@ -104,6 +104,13 @@ public class WorkOrder {
         this.status = WorkOrderStatus.RESOLVED;
     }
 
+    public void close() {
+        if(status != WorkOrderStatus.RESOLVED){
+            throw new IllegalStateException("Solo se pueden cerrar las órdenes resueltas");
+        }
+        this.status = WorkOrderStatus.CLOSED;
+    }
+
     @Override
     public String toString() {
         return "WorkOrder{" +
@@ -115,4 +122,6 @@ public class WorkOrder {
                 ", assignedTo=" + assignedTo +
                 '}';
     }
+
+
 }
