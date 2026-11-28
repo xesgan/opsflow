@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.AssignOrderRequest;
 import org.example.dto.CreateWorkOrderRequest;
 import org.example.dto.WorkOrderResponse;
@@ -22,7 +23,7 @@ public class WorkOrderController {
     }
 
     @PostMapping("/api/work-orders")
-    public WorkOrderResponse postWorkOrder(@RequestBody CreateWorkOrderRequest request) {
+    public WorkOrderResponse postWorkOrder(@Valid @RequestBody CreateWorkOrderRequest request) {
         return toResponse(workOrderService.crearWorkOrder(request.title(), request.description()));
     }
 
@@ -44,7 +45,7 @@ public class WorkOrderController {
     }
 
     @PatchMapping("/api/work-orders/{id}/assignment")
-    public ResponseEntity<WorkOrderResponse> assignOrder(@PathVariable UUID id, @RequestBody AssignOrderRequest request) {
+    public ResponseEntity<WorkOrderResponse> assignOrder(@PathVariable UUID id, @Valid @RequestBody AssignOrderRequest request) {
         try {
             return workOrderService.assignWorkOrder(id, request.assignedTo())
                     .map(this::toResponse)
