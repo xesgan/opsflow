@@ -1,5 +1,8 @@
 package org.example.controller;
 
+import org.example.dto.AssignOrderRequest;
+import org.example.dto.CreateWorkOrderRequest;
+import org.example.dto.WorkOrderResponse;
 import org.example.models.WorkOrder;
 import org.example.services.WorkOrderService;
 import org.springframework.http.HttpStatus;
@@ -7,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -15,46 +17,39 @@ public class WorkOrderController {
 
     final private WorkOrderService workOrderService;
 
-    public WorkOrderController(WorkOrderService workOrderSerivce) {
-        this.workOrderService = workOrderSerivce;
-    }
-
-    record CreateWorkOrderRequest(String title, String description) {
-    }
-
-    record AssignOrderRequest(String assignedTo) {
+    public WorkOrderController(WorkOrderService workOrderService) {
+        this.workOrderService = workOrderService;
     }
 
     @PostMapping("/api/work-orders")
-    public WorkOrder postWorkOrder(@RequestBody CreateWorkOrderRequest request) {
-        return workOrderService.crearWorkOrder(request.title(), request.description());
+    public WorkOrderResponse postWorkOrder(@RequestBody CreateWorkOrderRequest request) {
+        return toResponse(workOrderService.crearWorkOrder(request.title(), request.description()));
     }
 
     // Optional<WorkOrder> order = workOrderService.findWorkOrder(id)
     // Le pide al servicio que busque la orden. El Optional puede contener la orden o estar vacío.
     @GetMapping("/api/work-orders/{id}")
-    public ResponseEntity<WorkOrder> getWorkOrder(@PathVariable UUID id) {
-        Optional<WorkOrder> order = workOrderService.findWorkOrder(id);
-        if (order.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(order.get());
+    public ResponseEntity<WorkOrderResponse> getWorkOrder(@PathVariable UUID id) {
+        return workOrderService.findWorkOrder(id)
+                .map(this::toResponse)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/api/work-orders")
-    public List<WorkOrder> getAllWorkOrders() {
-        return workOrderService.findAllWorkOrders();
+    public List<WorkOrderResponse> getAllWorkOrders() {
+        return workOrderService.findAllWorkOrders().stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @PatchMapping("/api/work-orders/{id}/assignment")
-    public ResponseEntity<WorkOrder> assignOrder(@PathVariable UUID id, @RequestBody AssignOrderRequest request) {
+    public ResponseEntity<WorkOrderResponse> assignOrder(@PathVariable UUID id, @RequestBody AssignOrderRequest request) {
         try {
-            Optional<WorkOrder> order = workOrderService.assignWorkOrder(id, request.assignedTo);
-            if (order.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(order.get());
-
+            return workOrderService.assignWorkOrder(id, request.assignedTo())
+                    .map(this::toResponse)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException ex) {
@@ -63,14 +58,12 @@ public class WorkOrderController {
     }
 
     @PatchMapping("/api/work-orders/{id}/inprogress")
-    public ResponseEntity<WorkOrder> startOrder(@PathVariable UUID id) {
+    public ResponseEntity<WorkOrderResponse> startOrder(@PathVariable UUID id) {
         try {
-            Optional<WorkOrder> order = workOrderService.startOrder(id);
-            if (order.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(order.get());
-
+            return workOrderService.startOrder(id)
+                    .map(this::toResponse)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException ex) {
@@ -79,14 +72,12 @@ public class WorkOrderController {
     }
 
     @PatchMapping("/api/work-orders/{id}/resolve")
-    public ResponseEntity<WorkOrder> resolveOrder(@PathVariable UUID id) {
+    public ResponseEntity<WorkOrderResponse> resolveOrder(@PathVariable UUID id) {
         try {
-            Optional<WorkOrder> order = workOrderService.resolveOrder(id);
-            if (order.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(order.get());
-
+            return workOrderService.resolveOrder(id)
+                    .map(this::toResponse)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException ex) {
@@ -95,13 +86,12 @@ public class WorkOrderController {
     }
 
     @PatchMapping("/api/work-orders/{id}/close")
-    public ResponseEntity<WorkOrder> closeOrder(@PathVariable UUID id) {
+    public ResponseEntity<WorkOrderResponse> closeOrder(@PathVariable UUID id) {
         try {
-            Optional<WorkOrder> order = workOrderService.closeOrder(id);
-            if (order.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(order.get());
+            return workOrderService.closeOrder(id)
+                    .map(this::toResponse)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException ex) {
@@ -110,13 +100,12 @@ public class WorkOrderController {
     }
 
     @PatchMapping("/api/work-orders/{id}/cancel")
-    public ResponseEntity<WorkOrder> cancelOrder(@PathVariable UUID id) {
+    public ResponseEntity<WorkOrderResponse> cancelOrder(@PathVariable UUID id) {
         try {
-            Optional<WorkOrder> order = workOrderService.cancelOrder(id);
-            if (order.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(order.get());
+            return workOrderService.cancelOrder(id)
+                    .map(this::toResponse)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException ex) {
@@ -125,17 +114,28 @@ public class WorkOrderController {
     }
 
     @PatchMapping("/api/work-orders/{id}/reopen")
-    public ResponseEntity<WorkOrder> reopenOrder(@PathVariable UUID id) {
-        try{
-            Optional<WorkOrder> order = workOrderService.reopenOrder(id);
-            if(order.isEmpty()){
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(order.get());
+    public ResponseEntity<WorkOrderResponse> reopenOrder(@PathVariable UUID id) {
+        try {
+            return workOrderService.reopenOrder(id)
+                    .map(this::toResponse)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    // Auxiliar mapping method
+    private WorkOrderResponse toResponse(WorkOrder workOrder) {
+        return new WorkOrderResponse(
+                workOrder.getId(),
+                workOrder.getTitle(),
+                workOrder.getDescription(),
+                workOrder.getStatus(),
+                workOrder.getCreatedAt(),
+                workOrder.getAssignedTo()
+        );
     }
 }
